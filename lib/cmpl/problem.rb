@@ -23,7 +23,7 @@ class Problem
   
   attr_accessor :params
   
-  def initialize(schema, model_file:'workflow.cmpl', cmpl_opts: ['-s'], debug: false)
+  def initialize(schema, model_file:'workflow.cmpl', cmpl_opts: [], debug: false)
     @model_file = model_file
     @cmpl_opts = cmpl_opts
     @schema = schema
@@ -88,7 +88,7 @@ class Problem
     warn "Writing data to #{data_file}..."
     IO.write(data_file, data)
 
-    args = ['cmpl', @model_file, '-solution', solution_file, '-data', data_file]
+    args = ['cmpl', '-i', @model_file, '-solution', solution_file, '-data', data_file]
     args += @cmpl_opts
 
     cmpl_output = ""
@@ -126,8 +126,8 @@ class Problem
     File.open(dir + "/run.sh", 'w', 755) do |script|
       script.puts "#!/bin/sh"
 
-      args = ['cmpl', @model_file, '-solution', dir + "/solution.xml", '-data', dir + "/data.cdat", '-alias', dir+'/cmpltemp']
-      args += @cmpl_opts      
+      args = ['cmpl', '-i', @model_file, '-solution', dir + "/solution.xml", '-data', dir + "/data.cdat", '-alias', dir+'/cmpltemp']
+      args += @cmpl_opts
       script.puts Shellwords.shelljoin(args) + " 2>&1 > #{dir}/out.txt"
       
       script.puts "exit_code = $?"
